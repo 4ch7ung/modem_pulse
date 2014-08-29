@@ -37,7 +37,7 @@ void convertUTF16BE_to_UTF8(const char *instr, char *outstr)
 	outstr[k] = 0;
 }
 
-void msend_ussd(const char * modem, const char * ussd)
+char * msend_ussd(const char * modem, const char * ussd)
 {
 	FILE * ifile;
 	FILE * ofile;
@@ -45,6 +45,7 @@ void msend_ussd(const char * modem, const char * ussd)
 	char cmd[256];
 	char * msg;
 	char imei[5];
+	char * response = NULL;
 	
 	strncpy(imei,modem+strlen(modem)-4,4);
 	ifile = fopen(modem, "r");
@@ -61,10 +62,10 @@ void msend_ussd(const char * modem, const char * ussd)
 	fputs(cmd,ofile);
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		if(!strncmp(buff,"AT+CUSD",7))
 			break;
-		if(!strncmp(buff,"ERROR",10))
+		if(!strncmp(buff,"ERROR",10) || !strncmp(buff,"+CMS ERROR",10))
 		{
 			printf("[ERROR] %s: %s", imei, buff);
 			exit(1);
@@ -81,11 +82,14 @@ void msend_ussd(const char * modem, const char * ussd)
 			strtok(buff,"\"");
 			msg = strtok(NULL, "\"");
 			//convertUTF16BE_to_UTF8(msg, cmd);
-			printf("[INFO] %s: %s\n", imei, msg);
+			printf("[INFO] %s: OK\n", imei);
+			//printf("[INFO] %s: %s\n", imei, msg);
+			response = strdup(msg);
 			break;
 		}
 	}
 // End of USSD wait
 	if(ifile) fclose(ifile);
 	if(ofile) fclose(ofile);
+	return response;
 }

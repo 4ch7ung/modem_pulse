@@ -10,7 +10,7 @@ void mread_message(const char * modem)
 {
 	FILE * ifile;
 	FILE * ofile;
-	char buff[256];
+	char buff[1000];
 	char cmd[256];
 	char msg[1000];
 	char *pch;
@@ -31,7 +31,7 @@ void mread_message(const char * modem)
 	fputs(cmd,ofile);
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		if(!strncmp(buff,"OK",2))
 		{
 			printf("Done\n");
@@ -53,7 +53,7 @@ void mread_message(const char * modem)
 			printf("{NEW SIZE} %lu\n", strlen(msg));
 			printf("{MSG} %s\n",msg);
 		}
-		if(!strncmp(buff,"+CMS ERROR",10))
+		if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
 		{
 			printf("[ERROR] %s: %s", imei, buff);
 			exit(1);

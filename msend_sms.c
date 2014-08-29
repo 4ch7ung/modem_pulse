@@ -10,8 +10,8 @@ void msend_sms(const char* modem, const char* phone, const char* message)
 {
 	FILE * ifile;
 	FILE * ofile;
-	char buff[256];
-	char str[256];
+	char buff[1000];
+	char str[1000];
 	
 	ifile = fopen(modem, "r");
 	ofile = fopen(modem, "a+");
@@ -27,7 +27,7 @@ void msend_sms(const char* modem, const char* phone, const char* message)
 	fputs(str,ofile);
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		printf("[INFO] %s: %s", modem, buff);
 		if(!strncmp(buff,"AT+CMGS",7))
 			break;
@@ -36,7 +36,7 @@ void msend_sms(const char* modem, const char* phone, const char* message)
 	fputs(str,ofile);
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		if(!strncmp(buff,"+CMGS",5))
 		{
 			printf("[INFO] %s: +CMGS ... ", modem);
@@ -50,13 +50,13 @@ void msend_sms(const char* modem, const char* phone, const char* message)
 	}
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		if(!strncmp(buff,"OK",2))
 		{
 			printf("OK!\n");
 			break;
 		}
-		if(!strncmp(buff,"+CMS ERROR",10))
+		if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
 		{
 			printf("[ERROR] %s: %s", modem, buff);
 			return;

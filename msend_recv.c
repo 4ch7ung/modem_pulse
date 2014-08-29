@@ -6,21 +6,20 @@ void msend_recv_error(const char* message)
     exit(1);
 }
 
-void msend_recv(const char* modem, const char* phone, const char* message, const char* save_dir)
+char * msend_recv(const char* modem, const char* phone, const char* message, const char* save_dir)
 {
 	FILE * ifile;
 	FILE * ofile;
 	FILE * savefile;
-	char buff[256];
+	char buff[1000];
 	char cmd[256];
 	char msg[256];
-	char sphone[256];
 	char rphone[256];
 	char imei[5];
 	char savedir[256];
+	char * response;
 		
 	strncpy(imei,modem+strlen(modem)-4,4);
-	strcpy(sphone,phone);
 	strcpy(savedir,save_dir);
 	ifile = fopen(modem, "r");
 	ofile = fopen(modem, "a+");
@@ -36,7 +35,7 @@ void msend_recv(const char* modem, const char* phone, const char* message, const
 	fputs(cmd,ofile);
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		printf("[INFO] %s: %s", imei, buff);
 		if(!strncmp(buff,"AT+CMGS",7))
 			break;
@@ -45,13 +44,13 @@ void msend_recv(const char* modem, const char* phone, const char* message, const
 	fputs(msg,ofile);
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		if(!strncmp(buff,"+CMGS",5))
 		{
 			printf("[INFO] %s: +CMGS ... ", imei);
 			break;
 		}
-		if(!strncmp(buff,"+CMS ERROR",10))
+		if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
 		{
 			printf("[ERROR] %s: %s", imei, buff);
 			exit(1);
@@ -59,13 +58,13 @@ void msend_recv(const char* modem, const char* phone, const char* message, const
 	}
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		if(!strncmp(buff,"OK",2))
 		{
 			printf("OK!\n");
 			break;
 		}
-		if(!strncmp(buff,"+CMS ERROR",10))
+		if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
 		{
 			printf("[ERROR] %s: %s", imei, buff);
 			exit(1);
@@ -73,26 +72,26 @@ void msend_recv(const char* modem, const char* phone, const char* message, const
 	}
 // End of SMS send
 // Start of SMS wait
-	printf("[INFO] %s: Waiting for SMS reaponse ... ", imei);
+	printf("[INFO] %s: Waiting for SMS response ... ", imei);
 	while(ifile)
 	{
-		fgets(buff,256,ifile);
+		fgets(buff,1000,ifile);
 		if(!strncmp(buff,"+CMT",4))
 		{
-			strncpy(rphone,buff+7,12);
-			rphone[12] = 0;
+			strncpy(rphone,buff+7,strlen(phone));
+			rphone[strlen(phone)] = 0;
 			if(strcmp(rphone,phone))
 			{
-				printf("NO\n[INFO] %s: Recieved message from %s\n", imei, rphone);
-				fgets(buff,256,ifile);
+				printf(" NO\n[INFO] %s: Recieved message from %s\n", imei, rphone);
+				fgets(buff,1000,ifile);
 				printf("\t%s",buff);
 			}
 			else
 			{
-				printf("YES\n[INFO] %s: Received message from %s\n", imei, rphone);
-				fgets(buff,256,ifile);
+				printf(" YES\n[INFO] %s: Received message from %s\n", imei, rphone);
+				fgets(buff,1000,ifile);
 				printf("\t%s",buff);
-				//buff[strlen(buff)-2] = 0;
+				buff[strlen(buff)-2] = 0;
 				strcat(savedir,"/");
 				strcat(savedir,imei);
 				savefile = fopen(savedir, "w+");
@@ -110,7 +109,9 @@ void msend_recv(const char* modem, const char* phone, const char* message, const
 			}
 		}
 	}
+	response = strdup(buff);
 // End of SMS wait
 	if(ifile) fclose(ifile);
 	if(ofile) fclose(ofile);
+	return response;
 }
