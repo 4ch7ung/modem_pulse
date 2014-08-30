@@ -23,3 +23,7 @@ void msend_ussd_error(const char * message);
 
 void mread_message(const char * modem);
 void mread_message_error(const char * message);
+
+void mwrite_number(const char * modem, const char * phone);
+void mwrite_number_error(const char * message);
+

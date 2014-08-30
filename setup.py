@@ -7,4 +7,5 @@ setup(name='modem_pulse', version='1.0', \
 	  										 'msend_sms.c', \
 	  										 'mserver.c', \
 	  										 'msend_ussd.c', \
-	  										 'mread_message.c'])])
+	  										 'mread_message.c', \
+											 'mwrite_number.c'])])
