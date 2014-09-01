@@ -8,4 +8,5 @@ setup(name='modem_pulse', version='1.0', \
 	  										 'mserver.c', \
 	  										 'msend_ussd.c', \
 	  										 'mread_message.c', \
-											 'mwrite_number.c'])])
+											 'mwrite_number.c', \
+											 'mget_selfnumber.c'])])

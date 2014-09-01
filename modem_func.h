@@ -27,3 +27,5 @@ void mread_message_error(const char * message);
 void mwrite_number(const char * modem, const char * phone);
 void mwrite_number_error(const char * message);
 
+char * mget_selfnumber(const char * modem);
+void mget_selfnumber_error(const char * message);

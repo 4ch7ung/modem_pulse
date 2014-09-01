@@ -90,7 +90,7 @@ char * msend_recv(const char* modem, const char* phone, const char* message, con
 			{
 				printf(" YES\n[INFO] %s: Received message from %s\n", imei, rphone);
 				fgets(buff,1000,ifile);
-				printf("\t%s",buff);
+// 				printf("\t%s",buff);
 				buff[strlen(buff)-2] = 0;
 				strcat(savedir,"/");
 				strcat(savedir,imei);

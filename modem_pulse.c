@@ -113,6 +113,23 @@ recv_message(PyObject * self, PyObject * args)
 }
 
 static PyObject *
+get_selfnumber(PyObject * self, PyObject * args)
+{
+	const char * modem;
+
+	char * selfnumber;
+	PyObject * result;
+	
+	if(!PyArg_ParseTuple(args, "s", &modem))
+		return NULL;
+	selfnumber = mget_selfnumber(modem);
+	
+	result = Py_BuildValue("s",selfnumber);
+	free(selfnumber);
+	return result;
+}
+
+static PyObject *
 write_number(PyObject * self, PyObject * args)
 {
     const char * modem;
@@ -128,6 +145,7 @@ static PyMethodDef modem_methods[] = {
 	{"get_imei", (PyCFunction)get_imei, METH_VARARGS, "Prints the IMEI number of the given <modem>"},
 	{"init_session", (PyCFunction)init_session, METH_VARARGS, "Inits session for <modem>"},
 	{"server", (PyCFunction)server, METH_VARARGS, "Launches server on <modem>"},
+	{"get_selfnumber", (PyCFunction)get_selfnumber, METH_VARARGS, "Get selfnumber of <modem>"},
 	{"read_message", (PyCFunction)read_message, METH_VARARGS, "Reads messages from <modem>"},
 	{"send_sms", (PyCFunction)send_sms, METH_VARARGS, "Sends sms from <modem> to <phone> with text <message>"},
 	{"send_recv", (PyCFunction)send_recv, METH_VARARGS, "Sends sms from <modem> to <phone> with text <message> and waits for reply to save in <save_dir>"},

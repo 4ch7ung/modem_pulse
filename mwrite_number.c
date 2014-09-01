@@ -39,7 +39,7 @@ void mwrite_number(const char * modem, const char * phone)
 
 	sprintf(cmd, "AT+CPBW=1,\"%s\",129,\"SELF\"\r", phone);
 	fputs(cmd, ofile);
-    printf("[INFO] %s: %s ... ", modem, cmd);
+    printf("[INFO] %s: AT+CPBW=1,\"%s\",129,\"SELF\" ... ", modem, phone);
     while(ifile)
     {
         fgets(buff,256,ifile);
@@ -49,6 +49,6 @@ void mwrite_number(const char * modem, const char * phone)
             break;
         }
         if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
-            minit_session_error(buff);
+            mwrite_number_error(buff);
     }
 }
