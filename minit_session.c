@@ -36,8 +36,8 @@ void minit_session(const char * modem, const char * russian)
 			minit_session_error(buff);
 	}
 	
-	fputs("AT+CPMS=\"ME\",\"ME\",\"ME\"\r", ofile);
-	printf("[INFO] %s: AT+CPMS=\"ME\",\"ME\",\"ME\" ... ", modem);
+	fputs("AT+CPMS=\"SM\",\"SM\",\"SM\"\r", ofile);
+	printf("[INFO] %s: AT+CPMS=\"SM\",\"SM\",\"SM\" ... ", modem);
 	while(ifile)
 	{
 		fgets(buff,256,ifile);
@@ -52,6 +52,20 @@ void minit_session(const char * modem, const char * russian)
 
 	fputs("AT+CNMI=1,2,0,0,0\r",ofile);
 	printf("[INFO] %s: AT+CNMI=1,2,0,0,0 ... ", modem);
+	while(ifile)
+	{
+		fgets(buff,256,ifile);
+		if(!strncmp(buff,"OK",2))
+		{
+			printf("OK!\n");
+			break;
+		}
+		if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
+			minit_session_error(buff);
+	}
+	
+	fputs("AT+CMGD=1,1\r",ofile);
+	printf("[INFO] %s: AT+CMGD=1,4 ... ", modem);
 	while(ifile)
 	{
 		fgets(buff,256,ifile);

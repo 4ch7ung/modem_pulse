@@ -71,6 +71,19 @@ char * msend_recv(const char* modem, const char* phone, const char* message, con
 		}
 	}
 // End of SMS send
+	fputs("AT+CMGD=0,4\r",ofile);
+	printf("[INFO] %s: AT+CMGD=0,4 ... ", modem);
+	while(ifile)
+	{
+		fgets(buff,256,ifile);
+		if(!strncmp(buff,"OK",2))
+		{
+			printf("OK!\n");
+			break;
+		}
+		if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
+			minit_session_error(buff);
+	}
 // Start of SMS wait
 	printf("[INFO] %s: Waiting for SMS response ... ", imei);
 	while(ifile)
@@ -85,6 +98,18 @@ char * msend_recv(const char* modem, const char* phone, const char* message, con
 				printf(" NO\n[INFO] %s: Recieved message from %s\n", imei, rphone);
 				fgets(buff,1000,ifile);
 				printf("\t%s",buff);
+				printf("[INFO] %s: AT+CMGD=0 ... ", modem);
+				while(ifile)
+				{
+					fgets(buff,256,ifile);
+					if(!strncmp(buff,"OK",2))
+					{
+						printf("OK!\n");
+						break;
+					}
+					if(!strncmp(buff,"+CMS ERROR",10) || !strncmp(buff,"ERROR",5))
+						minit_session_error(buff);
+				}
 			}
 			else
 			{

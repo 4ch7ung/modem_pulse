@@ -29,3 +29,6 @@ void mwrite_number_error(const char * message);
 
 char * mget_selfnumber(const char * modem);
 void mget_selfnumber_error(const char * message);
+
+void msend_single_command_error(const char* message);
+void msend_single_command(const char * modem, const char * command);

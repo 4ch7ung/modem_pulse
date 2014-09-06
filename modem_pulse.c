@@ -29,6 +29,17 @@ init_session(PyObject * self, PyObject * args)
 }
 
 static PyObject *
+send_single_command(PyObject * self, PyObject * args)
+{
+	const char * modem;
+	const char * command;
+	if(!PyArg_ParseTuple(args, "ss", &modem, &command))
+		return NULL;
+	msend_single_command(modem,command);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
 server(PyObject * self, PyObject * args)
 {
 	const char * modem;
@@ -151,6 +162,7 @@ static PyMethodDef modem_methods[] = {
 	{"send_recv", (PyCFunction)send_recv, METH_VARARGS, "Sends sms from <modem> to <phone> with text <message> and waits for reply to save in <save_dir>"},
 	{"send_ussd", (PyCFunction)send_ussd, METH_VARARGS, "Sends from <modem> ussd request <ussd> and prints the response"},
 	{"write_number", (PyCFunction)write_number, METH_VARARGS, "Stores in <modem> the <phone> as selfphone"},
+	{"send_single_command", (PyCFunction)send_single_command, METH_VARARGS, "Sends to <modem> a single <command>"},
 	{"recv_message", (PyCFunction)recv_message, METH_VARARGS, "Recieves incoming message on <modem> and returns its contents"},
 	{NULL, NULL, 0, NULL}
 };
